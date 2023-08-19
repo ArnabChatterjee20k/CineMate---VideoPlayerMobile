@@ -1,7 +1,9 @@
-import { View, ScrollView } from "react-native";
+import { Text, View, ScrollView, FlatList } from "react-native";
 import SafeAreaView from "../components/SafeAreaView";
 import VideoThumbanails from "../components/VideoThumbanails";
-import React from "react";
+import React, { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { currentVisibleIndex, setCurrentIndex } from "../features/visibleVideoSlice";
 
 const data = [
   {
@@ -913,33 +915,57 @@ const data = [
 ];
 
 export default function YoutubeFeeds() {
+  const dispatch = useDispatch()
+  const currentVisibleVideo = useSelector(currentVisibleIndex)
+  console.log({currentVisibleVideo});
   return (
     <SafeAreaView>
-      <ScrollView style={{ flex: 1, backgroundColor: "black" }}>
-        {data.map(
-          ({
+      <FlatList
+        style={{ flex: 1, backgroundColor: "black" }}
+        data={data}
+        keyExtractor={({ video }) => video.videoId}
+        viewabilityConfig={{
+          itemVisiblePercentThreshold: 97,
+          minimumViewTime: 700,
+        }}
+        onViewableItemsChanged={useCallback((info) => {
+          // for safer option we are going for the first viewable option
+          const [visibleItem] = info.changed.filter(
+            (entry) => entry.isViewable
+          );
+          console.log(visibleItem);
+          dispatch(setCurrentIndex(visibleItem?.index))
+        }, [])}
+        renderItem={({index,
+          item: {
+            type,
             video: {
               author: { avatar, title: channelName },
               stats: { views },
               thumbnails,
               title,
               publishedTimeText,
-              videoId
+              videoId,
             },
-          }) => (
-            <View style={{ marginBottom: 20 }} key={videoId}>
-              <VideoThumbanails
-                channelName={channelName}
-                userURI={"https://yt3.ggpht.com/8oMzoXvdLZXiRf3gYT2cO902QsIOxBL8yUv6yWBvWnsg80O8G9Pk-BUAhu7n1VcFS-02EBo0-w=s68-c-k-c0x00ffffff-no-rj"}
-                thumbnailURI={thumbnails[0].url}
-                title={title}
-                views={views}
-                time={publishedTimeText}
-              />
-            </View>
-          )
-        )}
-      </ScrollView>
+          },
+        }) => {
+          if (type === "video") {
+            return (
+              <View style={{ marginBottom: 20 }} key={videoId}>
+                <VideoThumbanails
+                  index={index}
+                  channelName={channelName}
+                  userURI={avatar[0].url}
+                  thumbnailURI={thumbnails[0].url}
+                  title={title}
+                  views={views}
+                  time={publishedTimeText}
+                />
+              </View>
+            );
+          }
+        }}
+      />
     </SafeAreaView>
   );
 }

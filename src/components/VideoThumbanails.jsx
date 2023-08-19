@@ -1,6 +1,10 @@
 import { TouchableOpacity, View } from "react-native";
 import { Avatar, Button, Card, Text } from "react-native-paper";
-const LeftContent = (props, uri) => (
+import { useSelector } from "react-redux";
+import { currentVisibleIndex } from "../features/visibleVideoSlice";
+import VideoPlayer from "./VideoPlayer";
+
+const LeftContent = ({ props, uri }) => (
   <Avatar.Image
     {...props}
     source={{
@@ -8,6 +12,7 @@ const LeftContent = (props, uri) => (
     }}
   />
 );
+
 export default function VideoThumbanails({
   thumbnailURI,
   userURI,
@@ -15,16 +20,23 @@ export default function VideoThumbanails({
   time,
   views,
   channelName,
+  index,
 }) {
+  const currentVisibleVideo = useSelector(currentVisibleIndex);
   return (
     <TouchableOpacity>
       <Card style={{ backgroundColor: null }}>
-        <Card.Cover
-          style={{ borderRadius: 0 }}
-          source={{
-            uri: thumbnailURI,
-          }}
-        />
+        {index === currentVisibleIndex ? (
+          <VideoPlayer />
+        ) : (
+          <Card.Cover
+            style={{ borderRadius: 0, height: 300 }}
+            source={{
+              uri: thumbnailURI,
+            }}
+          />
+        )}
+
         <Card.Title
           style={{ gap: 1 }}
           title={<Text style={{ color: "white", fontSize: 18 }}>{title}</Text>}
@@ -37,7 +49,7 @@ export default function VideoThumbanails({
               <Text style={{ color: "#9CA3AF", fontSize: 15 }}>{time}</Text>
             </View>
           }
-          left={(props)=><LeftContent props={props} uri={userURI} />}
+          left={(props) => <LeftContent props={props} uri={userURI} />}
         />
       </Card>
     </TouchableOpacity>
