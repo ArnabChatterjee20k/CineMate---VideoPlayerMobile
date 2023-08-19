@@ -9,6 +9,7 @@ export default function VideoPlayer() {
     <Video
       ref={video}
       style={styles.video}
+      shouldPlay={true}
       source={{
         uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
       }}
@@ -27,8 +28,8 @@ const styles = StyleSheet.create({
   },
   video: {
     alignSelf: "center",
-    width: 320,
-    height: 200,
+    height: 300,
+    width:500
   },
   buttons: {
     flexDirection: "row",

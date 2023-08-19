@@ -925,7 +925,7 @@ export default function YoutubeFeeds() {
         data={data}
         keyExtractor={({ video }) => video.videoId}
         viewabilityConfig={{
-          itemVisiblePercentThreshold: 97,
+          itemVisiblePercentThreshold: 90,
           minimumViewTime: 700,
         }}
         onViewableItemsChanged={useCallback((info) => {

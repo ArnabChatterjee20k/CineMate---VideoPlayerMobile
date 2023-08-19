@@ -26,7 +26,7 @@ export default function VideoThumbanails({
   return (
     <TouchableOpacity>
       <Card style={{ backgroundColor: null }}>
-        {index === currentVisibleIndex ? (
+        {index === currentVisibleVideo ? (
           <VideoPlayer />
         ) : (
           <Card.Cover
